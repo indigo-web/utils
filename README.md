@@ -15,3 +15,6 @@ Contains `Keys` and `Copy` map operations. Ain't much but it's honest work.
 
 ## pool
 Simple thread-unsafe object-pool. Wrote own implementation as too lazy to benchmark the one from std-library. 
+
+## uf
+A set of unsafe features, like a hacky conversion between string and byte-slice.
