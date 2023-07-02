@@ -1,10 +1,10 @@
-package functools
+package ft
 
 func Map[A any, B any](fun func(A) B, input []A) []B {
-	result := make([]B, 0, len(input))
+	result := make([]B, len(input))
 
 	for i := range input {
-		result = append(result, fun(input[i]))
+		result[i] = fun(input[i])
 	}
 
 	return result

@@ -1,8 +1,8 @@
-package functools
+package ft
 
-import "github.com/indigo-web/indigo/internal/constraints"
+import "github.com/indigo-web/utils/constraint"
 
-func accumulator[T constraints.Addable](prev T, curr T) T {
+func accumulator[T constraint.Addable](prev T, curr T) T {
 	return prev + curr
 }
 
