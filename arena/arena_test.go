@@ -14,15 +14,13 @@ func pushSegment(t *testing.T, arena *Arena, text string) {
 
 func TestArena(t *testing.T) {
 	t.Run("NoOverflow", func(t *testing.T) {
-		rawArena := NewArena(10, 20)
-		arena := &rawArena
+		arena := NewArena(10, 20)
 		pushSegment(t, arena, "Hello")
 		pushSegment(t, arena, "Here")
 	})
 
 	t.Run("YesOverflow", func(t *testing.T) {
-		rawArena := NewArena(10, 20)
-		arena := &rawArena
+		arena := NewArena(10, 20)
 		// "Hello, World!" is 13 characters length, so it will force the Arena
 		// to grow an underlying slice
 		pushSegment(t, arena, "Hello, ")
@@ -30,8 +28,7 @@ func TestArena(t *testing.T) {
 	})
 
 	t.Run("SizeLimitOverflow", func(t *testing.T) {
-		rawArena := NewArena(10, 20)
-		arena := &rawArena
+		arena := NewArena(10, 20)
 		pushSegment(t, arena, "Hello, ")
 		pushSegment(t, arena, "World!")
 		pushSegment(t, arena, "Lorem ")

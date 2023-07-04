@@ -10,8 +10,8 @@ type Arena struct {
 	maxSize int
 }
 
-func NewArena(initialSpace, maxSpace int) Arena {
-	return Arena{
+func NewArena(initialSpace, maxSpace int) *Arena {
+	return &Arena{
 		memory:  make([]byte, initialSpace),
 		maxSize: maxSpace,
 	}

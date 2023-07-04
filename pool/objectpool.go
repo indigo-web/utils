@@ -6,8 +6,8 @@ type ObjectPool[T any] struct {
 	queue []T
 }
 
-func NewObjectPool[T any](queueSize int) ObjectPool[T] {
-	return ObjectPool[T]{
+func NewObjectPool[T any](queueSize int) *ObjectPool[T] {
+	return &ObjectPool[T]{
 		queue: make([]T, 0, queueSize),
 	}
 }
