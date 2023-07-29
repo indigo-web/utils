@@ -10,6 +10,7 @@ type Arena[T any] struct {
 	maxSize int
 }
 
+// NewArena returns a new arena instance
 func NewArena[T any](initialSpace, maxSpace int) *Arena[T] {
 	return &Arena[T]{
 		memory:  make([]T, initialSpace),
@@ -40,6 +41,13 @@ func (a *Arena[T]) Append(elements ...T) (ok bool) {
 	return true
 }
 
+// SegmentLength returns a number of bytes, taken by current segment, calculated as a difference
+// between the beginning of the current segment and the current pointer
+func (a *Arena[T]) SegmentLength() int {
+	return a.pos - a.begin
+}
+
+// Finish completes current segment, returning its value
 func (a *Arena[T]) Finish() []T {
 	segment := a.memory[a.begin:a.pos]
 	a.begin = a.pos
@@ -47,6 +55,7 @@ func (a *Arena[T]) Finish() []T {
 	return segment
 }
 
+// Clear just resets the pointers, so old values may be overridden by new ones.
 func (a *Arena[T]) Clear() {
 	a.begin = 0
 	a.pos = 0
