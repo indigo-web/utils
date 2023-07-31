@@ -36,4 +36,30 @@ func TestArena(t *testing.T) {
 		ok := arena.Append([]byte("overflow")...)
 		require.False(t, ok)
 	})
+
+	t.Run("SegmentLength", func(t *testing.T) {
+		arena := NewArena[byte](10, 20)
+		require.True(t, arena.Append([]byte("Hello, ")...))
+		require.True(t, arena.Append([]byte("World!")...))
+		require.Equal(t, 13, arena.SegmentLength())
+	})
+
+	t.Run("Discard", func(t *testing.T) {
+		testDiscard(t, 13)
+	})
+
+	t.Run("BigDiscard", func(t *testing.T) {
+		testDiscard(t, 50)
+	})
+}
+
+func testDiscard(t *testing.T, n int) {
+	arena := NewArena[byte](10, 20)
+	require.True(t, arena.Append([]byte("Hello, world!")...))
+	segment := arena.Finish()
+	arena.Discard(n)
+	require.True(t, arena.Append([]byte("Hello!")...))
+	newSegment := arena.Finish()
+	require.Equal(t, "Hello!", string(newSegment))
+	require.Equal(t, "Hello! world!", string(segment))
 }

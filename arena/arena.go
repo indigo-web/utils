@@ -22,7 +22,7 @@ func NewArena[T any](initialSpace, maxSpace int) *Arena[T] {
 // and data isn't written
 func (a *Arena[T]) Append(elements ...T) (ok bool) {
 	if a.pos+len(elements) > len(a.memory) {
-		if len(a.memory)+len(elements) >= a.maxSize {
+		if a.pos+len(elements) > a.maxSize {
 			return false
 		}
 
@@ -45,6 +45,16 @@ func (a *Arena[T]) Append(elements ...T) (ok bool) {
 // between the beginning of the current segment and the current pointer
 func (a *Arena[T]) SegmentLength() int {
 	return a.pos - a.begin
+}
+
+// Discard discards current segment, and returns begin mark back by n bytes
+func (a *Arena[T]) Discard(n int) {
+	if n > a.begin {
+		n = a.begin
+	}
+
+	a.begin -= n
+	a.pos = a.begin
 }
 
 // Finish completes current segment, returning its value
