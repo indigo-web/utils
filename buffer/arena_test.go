@@ -1,4 +1,4 @@
-package arena
+package buffer
 
 import (
 	"github.com/stretchr/testify/require"

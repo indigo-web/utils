@@ -1,18 +1,20 @@
-package arena
+package buffer
 
-// Arena is simply a big slice static-sized slice. It behaves just like built-in append()
-// function, except encapsulating its internal implementation, so no slice is being returned
-// to user - just boolean flag whether newly appended data exceeds size limits.
-type Arena[T any] struct {
+// Buffer is simply a big slice, that can grow up to some limit, specified via
+// constructor. Mainly used for cases, when we want to store multiple data pieces
+// in the buffer, without knowing the actual size of each. So basically, it
+// operates completely as append does, but encapsulates some important logic, like
+// overflow checks and markers
+type Buffer[T any] struct {
 	memory     []T
 	begin, pos int
 
 	maxSize int
 }
 
-// NewArena returns a new arena instance
-func NewArena[T any](initialSpace, maxSpace int) *Arena[T] {
-	return &Arena[T]{
+// NewBuffer returns a new buffer instance
+func NewBuffer[T any](initialSpace, maxSpace int) *Buffer[T] {
+	return &Buffer[T]{
 		memory:  make([]T, initialSpace),
 		maxSize: maxSpace,
 	}
@@ -20,7 +22,7 @@ func NewArena[T any](initialSpace, maxSpace int) *Arena[T] {
 
 // Append appends bytes to a buffer. In case of exceeding the maximal size, false is returned
 // and data isn't written
-func (a *Arena[T]) Append(elements ...T) (ok bool) {
+func (a *Buffer[T]) Append(elements ...T) (ok bool) {
 	if a.pos+len(elements) > len(a.memory) {
 		if a.pos+len(elements) > a.maxSize {
 			return false
@@ -43,12 +45,12 @@ func (a *Arena[T]) Append(elements ...T) (ok bool) {
 
 // SegmentLength returns a number of bytes, taken by current segment, calculated as a difference
 // between the beginning of the current segment and the current pointer
-func (a *Arena[T]) SegmentLength() int {
+func (a *Buffer[T]) SegmentLength() int {
 	return a.pos - a.begin
 }
 
 // Discard discards current segment, and returns begin mark back by n bytes
-func (a *Arena[T]) Discard(n int) {
+func (a *Buffer[T]) Discard(n int) {
 	if n > a.begin {
 		n = a.begin
 	}
@@ -58,7 +60,7 @@ func (a *Arena[T]) Discard(n int) {
 }
 
 // Finish completes current segment, returning its value
-func (a *Arena[T]) Finish() []T {
+func (a *Buffer[T]) Finish() []T {
 	segment := a.memory[a.begin:a.pos]
 	a.begin = a.pos
 
@@ -66,7 +68,7 @@ func (a *Arena[T]) Finish() []T {
 }
 
 // Clear just resets the pointers, so old values may be overridden by new ones.
-func (a *Arena[T]) Clear() {
+func (a *Buffer[T]) Clear() {
 	a.begin = 0
 	a.pos = 0
 }
