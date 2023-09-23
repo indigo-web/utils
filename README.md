@@ -16,5 +16,11 @@ Contains `Keys` and `Copy` map operations. Ain't much but it's honest work.
 ## pool
 Simple thread-unsafe object-pool. Wrote own implementation as too lazy to benchmark the one from std-library and compare them (thread-safety is anyway not needed, so considered by me to be an overkill). 
 
+## strcomp
+Contains a single function - `EqualFold()`. It compares case-insensitively two equal-length strings char-by-char.
+
 ## uf
 Small package with common and widely used (at least in indigo and some other side projects) unsafe functions `B2S` and `S2B`. The implementation is taken from fasthttp.
+
+## unreader
+Save unneeded bytes for the next time. Used mostly to leave data read from socket for future.
