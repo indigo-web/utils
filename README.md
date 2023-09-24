@@ -10,6 +10,9 @@ A small set of generic annotations.
 ## ft
 Functional Tools: map, reduce, summer. Yet another fp-tools library without even tests.
 
+## hex
+Provides functions to validate hex characters, and one for decoding byte sequence.
+
 ## mapconv
 Contains `Keys` and `Copy` map operations. Ain't much but it's honest work.
 
