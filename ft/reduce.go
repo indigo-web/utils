@@ -1,10 +1,6 @@
 package ft
 
-import (
-	"github.com/indigo-web/utils/constraint"
-)
-
-func Reduce[T constraint.Addable](f func(T, T) T, input []T, initial ...T) (result T) {
+func Reduce[T any](f func(T, T) T, input []T, initial ...T) (result T) {
 	values := append(initial, input...)
 	if len(values) == 0 {
 		return
