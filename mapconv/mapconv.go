@@ -12,7 +12,7 @@ func Keys[K comparable, V any](from map[K]V) []K {
 	return keys
 }
 
-func Copy[K comparable, V any](m map[K]V) map[K]V {
+func Clone[K comparable, V any](m map[K]V) map[K]V {
 	newMap := make(map[K]V, len(m))
 
 	for k, v := range m {
@@ -20,4 +20,10 @@ func Copy[K comparable, V any](m map[K]V) map[K]V {
 	}
 
 	return newMap
+}
+
+func Copy[K comparable, V any](src, dst map[K]V) {
+	for key, value := range src {
+		dst[key] = value
+	}
 }
