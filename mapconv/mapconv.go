@@ -23,6 +23,10 @@ func Clone[K comparable, V any](m map[K]V) map[K]V {
 }
 
 func Copy[K comparable, V any](src, dst map[K]V) {
+	if dst == nil {
+		dst = make(map[K]V, len(src))
+	}
+
 	for key, value := range src {
 		dst[key] = value
 	}
