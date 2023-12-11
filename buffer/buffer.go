@@ -5,69 +5,57 @@ package buffer
 // in the buffer, without knowing the actual size of each. So basically, it
 // operates completely as append does, but encapsulates some important logic, like
 // overflow checks and markers
-type Buffer[T any] struct {
-	memory     []T
-	begin, pos int
-
+type Buffer struct {
+	memory  []byte
+	begin   int
 	maxSize int
 }
 
-func New[T any](initialSpace, maxSpace int) *Buffer[T] {
-	return &Buffer[T]{
-		memory:  make([]T, initialSpace),
+func New(initialSpace, maxSpace int) *Buffer {
+	return &Buffer{
+		memory:  make([]byte, 0, initialSpace),
 		maxSize: maxSpace,
 	}
 }
 
 // Append appends bytes to a buffer. In case of exceeding the maximal size, false is returned
 // and data isn't written
-func (a *Buffer[T]) Append(elements ...T) (ok bool) {
-	if a.pos+len(elements) > len(a.memory) {
-		if a.pos+len(elements) > a.maxSize {
-			return false
-		}
-
-		copy(a.memory[a.pos:], elements)
-		// rely on the built-in slice growth mechanism. This sometimes exceeds the size limit
-		// without notifying the user anyhow, but this doesn't bother anybody at the moment
-		a.memory = append(a.memory, elements[len(a.memory)-a.pos:]...)
-		a.pos += len(elements)
-
-		return true
+func (a *Buffer) Append(elements []byte) (ok bool) {
+	if len(a.memory)+len(elements) > a.maxSize {
+		return false
 	}
 
-	copy(a.memory[a.pos:], elements)
-	a.pos += len(elements)
+	a.memory = append(a.memory, elements...)
 
 	return true
 }
 
 // SegmentLength returns a number of bytes, taken by current segment, calculated as a difference
 // between the beginning of the current segment and the current pointer
-func (a *Buffer[T]) SegmentLength() int {
-	return a.pos - a.begin
+func (a *Buffer) SegmentLength() int {
+	return len(a.memory) - a.begin
 }
 
 // Discard discards current segment, and returns begin mark back by n bytes
-func (a *Buffer[T]) Discard(n int) {
+func (a *Buffer) Discard(n int) {
 	if n > a.begin {
 		n = a.begin
 	}
 
 	a.begin -= n
-	a.pos = a.begin
+	a.memory = a.memory[:a.begin]
 }
 
 // Finish completes current segment, returning its value
-func (a *Buffer[T]) Finish() []T {
-	segment := a.memory[a.begin:a.pos]
-	a.begin = a.pos
+func (a *Buffer) Finish() []byte {
+	segment := a.memory[a.begin:]
+	a.begin = len(a.memory)
 
 	return segment
 }
 
 // Clear just resets the pointers, so old values may be overridden by new ones.
-func (a *Buffer[T]) Clear() {
+func (a *Buffer) Clear() {
 	a.begin = 0
-	a.pos = 0
+	a.memory = a.memory[:0]
 }

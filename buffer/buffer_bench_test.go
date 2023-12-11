@@ -6,7 +6,7 @@ import (
 )
 
 func BenchmarkBuffer(b *testing.B) {
-	buff := New[byte](1024, 4096)
+	buff := New(1024, 4096)
 	smallString := []byte(strings.Repeat("a", 1023))
 	bigString := []byte(strings.Repeat("a", 4095))
 
@@ -16,7 +16,7 @@ func BenchmarkBuffer(b *testing.B) {
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
-			_ = buff.Append(smallString...)
+			_ = buff.Append(smallString)
 			buff.Clear()
 		}
 	})
@@ -27,9 +27,9 @@ func BenchmarkBuffer(b *testing.B) {
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
-			_ = buff.Append(bigString...)
+			_ = buff.Append(bigString)
 			buff.Clear()
-			buff.memory = buff.memory[0:1024:1024]
+			buff.memory = buff.memory[0:0:1024]
 		}
 	})
 }
