@@ -12,8 +12,7 @@ type Buffer[T any] struct {
 	maxSize int
 }
 
-// NewBuffer returns a new buffer instance
-func NewBuffer[T any](initialSpace, maxSpace int) *Buffer[T] {
+func New[T any](initialSpace, maxSpace int) *Buffer[T] {
 	return &Buffer[T]{
 		memory:  make([]T, initialSpace),
 		maxSize: maxSpace,
