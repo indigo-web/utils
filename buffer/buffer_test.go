@@ -5,43 +5,43 @@ import (
 	"testing"
 )
 
-func pushSegment(t *testing.T, arena *Arena[byte], text string) {
-	ok := arena.Append([]byte(text)...)
+func pushSegment(t *testing.T, buff *Buffer[byte], text string) {
+	ok := buff.Append([]byte(text)...)
 	require.True(t, ok)
-	segment := arena.Finish()
+	segment := buff.Finish()
 	require.Equal(t, text, string(segment))
 }
 
-func TestArena(t *testing.T) {
+func TestBuffer(t *testing.T) {
 	t.Run("NoOverflow", func(t *testing.T) {
-		arena := NewArena[byte](10, 20)
-		pushSegment(t, arena, "Hello")
-		pushSegment(t, arena, "Here")
+		buff := New[byte](10, 20)
+		pushSegment(t, buff, "Hello")
+		pushSegment(t, buff, "Here")
 	})
 
 	t.Run("YesOverflow", func(t *testing.T) {
-		arena := NewArena[byte](10, 20)
-		// "Hello, World!" is 13 characters length, so it will force the Arena
+		buff := New[byte](10, 20)
+		// "Hello, World!" is 13 characters length, so it will force the Buffer
 		// to grow an underlying slice
-		pushSegment(t, arena, "Hello, ")
-		pushSegment(t, arena, "World!")
+		pushSegment(t, buff, "Hello, ")
+		pushSegment(t, buff, "World!")
 	})
 
 	t.Run("SizeLimitOverflow", func(t *testing.T) {
-		arena := NewArena[byte](10, 20)
-		pushSegment(t, arena, "Hello, ")
-		pushSegment(t, arena, "World!")
-		pushSegment(t, arena, "Lorem ")
+		buff := New[byte](10, 20)
+		pushSegment(t, buff, "Hello, ")
+		pushSegment(t, buff, "World!")
+		pushSegment(t, buff, "Lorem ")
 		// at this point, we have reached 19 elements in underlying slice
-		ok := arena.Append([]byte("overflow")...)
+		ok := buff.Append([]byte("overflow")...)
 		require.False(t, ok)
 	})
 
 	t.Run("SegmentLength", func(t *testing.T) {
-		arena := NewArena[byte](10, 20)
-		require.True(t, arena.Append([]byte("Hello, ")...))
-		require.True(t, arena.Append([]byte("World!")...))
-		require.Equal(t, 13, arena.SegmentLength())
+		buff := New[byte](10, 20)
+		require.True(t, buff.Append([]byte("Hello, ")...))
+		require.True(t, buff.Append([]byte("World!")...))
+		require.Equal(t, 13, buff.SegmentLength())
 	})
 
 	t.Run("Discard", func(t *testing.T) {
@@ -54,12 +54,12 @@ func TestArena(t *testing.T) {
 }
 
 func testDiscard(t *testing.T, n int) {
-	arena := NewArena[byte](10, 20)
-	require.True(t, arena.Append([]byte("Hello, world!")...))
-	segment := arena.Finish()
-	arena.Discard(n)
-	require.True(t, arena.Append([]byte("Hello!")...))
-	newSegment := arena.Finish()
+	buff := New[byte](10, 20)
+	require.True(t, buff.Append([]byte("Hello, world!")...))
+	segment := buff.Finish()
+	buff.Discard(n)
+	require.True(t, buff.Append([]byte("Hello!")...))
+	newSegment := buff.Finish()
 	require.Equal(t, "Hello!", string(newSegment))
 	require.Equal(t, "Hello! world!", string(segment))
 }
