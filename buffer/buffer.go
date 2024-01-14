@@ -46,6 +46,11 @@ func (a *Buffer) Discard(n int) {
 	a.memory = a.memory[:a.begin]
 }
 
+// Preview returns current segment without moving the head
+func (a *Buffer) Preview() []byte {
+	return a.memory[a.begin:]
+}
+
 // Finish completes current segment, returning its value
 func (a *Buffer) Finish() []byte {
 	segment := a.memory[a.begin:]
