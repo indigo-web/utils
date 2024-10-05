@@ -26,7 +26,6 @@ func (a *Buffer) Append(elements []byte) (ok bool) {
 	}
 
 	a.memory = append(a.memory, elements...)
-
 	return true
 }
 
@@ -36,7 +35,16 @@ func (a *Buffer) SegmentLength() int {
 	return len(a.memory) - a.begin
 }
 
-// Discard discards current segment, and returns begin mark back by n bytes
+// Trunc truncates the last n bytes from the current segment, guaranting that data of previous segments stays intact
+func (a *Buffer) Trunc(n int) {
+	if seglen := a.SegmentLength(); n > seglen {
+		n = seglen
+	}
+
+	a.memory = a.memory[:len(a.memory)-n]
+}
+
+// Discard discards current segment, and brings begin mark back by n bytes
 func (a *Buffer) Discard(n int) {
 	if n > a.begin {
 		n = a.begin

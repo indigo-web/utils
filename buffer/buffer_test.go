@@ -48,6 +48,11 @@ func TestBuffer(t *testing.T) {
 		testDiscard(t, 13)
 		testDiscard(t, 50)
 	})
+
+	t.Run("truncate", func(t *testing.T) {
+		testTrunc(t, 1)
+		testTrunc(t, 5)
+	})
 }
 
 func testDiscard(t *testing.T, n int) {
@@ -59,4 +64,20 @@ func testDiscard(t *testing.T, n int) {
 	newSegment := buff.Finish()
 	require.Equal(t, "Hello!", string(newSegment))
 	require.Equal(t, "Hello! world!", string(segment))
+}
+
+func testTrunc(t *testing.T, n int) {
+	buff := New(10, 20)
+	require.True(t, buff.Append([]byte("Hello, world!")))
+	segment := buff.Finish()
+	require.True(t, buff.Append([]byte("Hi?")))
+	buff.Trunc(n)
+	require.Equal(t, "Hello, world!", string(segment))
+
+	orig := "Hi?"
+	if n > len(orig) {
+		n = len(orig)
+	}
+
+	require.Equal(t, orig[:len(orig)-n], string(buff.Finish()))
 }
